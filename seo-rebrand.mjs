@@ -6,6 +6,7 @@ const ROOT = process.cwd();
 const SITE_NAME = 'Online Tools';
 const FULL_SITE_NAME = 'Online Tools — Free Web Utilities';
 const BASE_URL = 'https://ot.itisuniqueofficial.com';
+const CONTACT_URL = 'https://github.com/itisuniqueofficial-gh/online-tools/discussions';
 const TODAY = new Date().toISOString().slice(0, 10);
 
 const escapeHtml = (value) => String(value)
@@ -338,9 +339,11 @@ const rewriteHtml = (html, name, url, description, rel, isHome = false) => {
   let next = html.replace(/<title>[\s\S]*?(?=<link rel="icon")/i, headMeta(name, url, description, keywords, isHome));
   next = next.replace(/<base href="\/online-tools\/">/gi, '<base href="/">');
   next = next.replace(/\/online-tools\//g, '/');
+  next = next.replace(/https:\/\/github\.com\/itisuniqueofficial-gh\/discussions/g, CONTACT_URL);
   next = next.replace(/<h2>Online Tools<\/h2>/g, '<h2>Online Tools</h2>');
   next = next.replace(/alt="Logo"/g, 'alt="Online Tools logo"');
-  next = next.replace(/https:\/\/github\.com\/emn178\/online-tools\/issues/g, BASE_URL);
+  next = next.replace(/https:\/\/github\.com\/emn178\/online-tools\/issues/g, CONTACT_URL);
+  next = next.replace(/href="https:\/\/ot\.itisuniqueofficial\.com"/g, `href="${CONTACT_URL}"`);
 
   if (isHome) {
     next = next.replace(/<header><h1>Online Tools<\/h1><p>[\s\S]*?<\/p><\/header>/i, `<header><h1>${escapeHtml(FULL_SITE_NAME)}</h1><p>${escapeHtml(description)}</p></header>`);
@@ -353,6 +356,7 @@ const rewriteHtml = (html, name, url, description, rel, isHome = false) => {
 const htmlFiles = execSync('git ls-files "*.html"', { cwd: ROOT, encoding: 'utf8' })
   .split(/\r?\n/)
   .filter(Boolean)
+  .filter((file) => !/^[^/]+-online\/index\.html$/i.test(file))
   .map((file) => path.join(ROOT, file));
 
 const pages = [];
