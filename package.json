@@ -1,11 +1,42 @@
 {
-  "name": "online-tools-rebrand",
+  "name": "online-tools",
   "version": "1.0.0",
-  "private": true,
+  "description": "Free online web utilities for hashing, encoding, decoding, encryption, conversion, and developer productivity.",
+  "homepage": "https://ot.itisuniqueofficial.com/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itisuniqueofficial-gh/online-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itisuniqueofficial-gh/online-tools/issues"
+  },
+  "license": "MIT",
+  "author": "It Is Unique Official",
   "type": "module",
+  "keywords": [
+    "online-tools",
+    "web-utilities",
+    "developer-tools",
+    "hashing",
+    "encoding",
+    "decoding",
+    "encryption-tools",
+    "seo-tools",
+    "static-site",
+    "cloudflare-pages",
+    "javascript",
+    "nodejs",
+    "open-source"
+  ],
   "scripts": {
     "dev": "node dev-server.mjs",
     "start": "node dev-server.mjs",
-    "rebrand": "node seo-rebrand.mjs"
+    "build": "node seo-rebrand.mjs",
+    "rebrand": "node seo-rebrand.mjs",
+    "validate": "node --check seo-rebrand.mjs && node --check dev-server.mjs && node --check js/main.js && node --check js/monaco-editor.js && node --check js/syntax-highlight.js"
+  },
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
   }
 }

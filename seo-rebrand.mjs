@@ -7,6 +7,53 @@ const SITE_NAME = 'Online Tools';
 const FULL_SITE_NAME = 'Online Tools — Free Web Utilities';
 const BASE_URL = 'https://ot.itisuniqueofficial.com';
 const CONTACT_URL = 'https://github.com/itisuniqueofficial-gh/online-tools/discussions';
+const JQUERY_SCRIPT = '<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0oeXUqK9PibK1Zt9lW8=" crossorigin="anonymous" defer></script>';
+const GRAPICK_CSS = 'https://cdn.jsdelivr.net/npm/grapick@0.1.13/dist/grapick.min.css';
+const GRAPICK_JS = 'https://cdn.jsdelivr.net/npm/grapick@0.1.13/dist/grapick.min.js';
+const GRAPICK_CSS_INTEGRITY = 'sha384-4EXeVJ0v8SVgj6nciaiDBqG7tZ6oz+cWouBaHyZLBAhd6Gaf9qSv1Tew1I41bM/T';
+const GRAPICK_JS_INTEGRITY = 'sha384-m+wpu3DWQ0UF1vZ4wMCmj3ZNqqdXnZGOiZOtjh9TVCaeMDzPycCkQxuUk1gKzoRO';
+const HIGHLIGHT_JS_INTEGRITY = 'sha384-RH2xi4eIQ/gjtbs9fUXM68sLSi99C7ZWBRX1vDrVv6GQXRibxXLbwO2NGZB74MbU';
+const HIGHLIGHT_STYLE_BASE = 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles';
+const HIGHLIGHT_STYLE_RENAMES = {
+  'atelier-cave-dark.min.css': 'base16/atelier-cave.min.css',
+  'atelier-cave-light.min.css': 'base16/atelier-cave-light.min.css',
+  'atelier-dune-dark.min.css': 'base16/atelier-dune.min.css',
+  'atelier-dune-light.min.css': 'base16/atelier-dune-light.min.css',
+  'atelier-estuary-dark.min.css': 'base16/atelier-estuary.min.css',
+  'atelier-estuary-light.min.css': 'base16/atelier-estuary-light.min.css',
+  'atelier-forest-dark.min.css': 'base16/atelier-forest.min.css',
+  'atelier-forest-light.min.css': 'base16/atelier-forest-light.min.css',
+  'atelier-heath-dark.min.css': 'base16/atelier-heath.min.css',
+  'atelier-heath-light.min.css': 'base16/atelier-heath-light.min.css',
+  'atelier-lakeside-dark.min.css': 'base16/atelier-lakeside.min.css',
+  'atelier-lakeside-light.min.css': 'base16/atelier-lakeside-light.min.css',
+  'atelier-plateau-dark.min.css': 'base16/atelier-plateau.min.css',
+  'atelier-plateau-light.min.css': 'base16/atelier-plateau-light.min.css',
+  'atelier-savanna-dark.min.css': 'base16/atelier-savanna.min.css',
+  'atelier-savanna-light.min.css': 'base16/atelier-savanna-light.min.css',
+  'atelier-seaside-dark.min.css': 'base16/atelier-seaside.min.css',
+  'atelier-seaside-light.min.css': 'base16/atelier-seaside-light.min.css',
+  'atelier-sulphurpool-dark.min.css': 'base16/atelier-sulphurpool.min.css',
+  'atelier-sulphurpool-light.min.css': 'base16/atelier-sulphurpool-light.min.css',
+  'darkula.min.css': 'base16/darcula.min.css',
+  'dracula.min.css': 'base16/dracula.min.css',
+  'github-gist.min.css': 'github.min.css',
+  'gruvbox-dark.min.css': 'base16/gruvbox-dark-hard.min.css',
+  'gruvbox-light.min.css': 'base16/gruvbox-light-hard.min.css',
+  'hopscotch.min.css': 'base16/hopscotch.min.css',
+  'kimbie.dark.min.css': 'kimbie-dark.min.css',
+  'kimbie.light.min.css': 'kimbie-light.min.css',
+  'ocean.min.css': 'base16/ocean.min.css',
+  'qtcreator_dark.min.css': 'qtcreator-dark.min.css',
+  'qtcreator_light.min.css': 'qtcreator-light.min.css',
+  'railscasts.min.css': 'base16/railscasts.min.css',
+  'solarized-dark.min.css': 'base16/solarized-dark.min.css',
+  'solarized-light.min.css': 'base16/solarized-light.min.css',
+  'tomorrow.min.css': 'base16/tomorrow.min.css',
+  'tomorrow-night.min.css': 'base16/tomorrow-night.min.css',
+  'tomorrow-night-eighties.min.css': 'base16/eighties.min.css',
+  'zenburn.min.css': 'base16/zenburn.min.css'
+};
 const TODAY = new Date().toISOString().slice(0, 10);
 
 const escapeHtml = (value) => String(value)
@@ -106,6 +153,14 @@ const keywordList = (name, originalKeywords) => {
     })
     .join(', ');
 };
+
+const rewriteHighlightStyleUrls = (html) => html.replace(
+  /https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/9\.5\.0\/styles\/([^"']+)/g,
+  (_, style) => `${HIGHLIGHT_STYLE_BASE}/${HIGHLIGHT_STYLE_RENAMES[style] || style}`
+).replace(
+  /https:\/\/cdn\.jsdelivr\.net\/npm\/@highlightjs\/cdn-assets@11\.11\.1\/styles\/([^"']+)/g,
+  (_, style) => `${HIGHLIGHT_STYLE_BASE}/${HIGHLIGHT_STYLE_RENAMES[style] || style}`
+);
 
 const faqEntries = (name) => {
   const lower = name.toLowerCase();
@@ -342,8 +397,18 @@ const rewriteHtml = (html, name, url, description, rel, isHome = false) => {
   next = next.replace(/https:\/\/github\.com\/itisuniqueofficial-gh\/discussions/g, CONTACT_URL);
   next = next.replace(/<h2>Online Tools<\/h2>/g, '<h2>Online Tools</h2>');
   next = next.replace(/alt="Logo"/g, 'alt="Online Tools logo"');
-  next = next.replace(/https:\/\/github\.com\/emn178\/online-tools\/issues/g, CONTACT_URL);
   next = next.replace(/href="https:\/\/ot\.itisuniqueofficial\.com"/g, `href="${CONTACT_URL}"`);
+  next = next.replace(/<script src="https:\/\/code\.jquery\.com\/jquery-[^"]+\.min\.js"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")? defer><\/script>/g, JQUERY_SCRIPT);
+  next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.css/g, GRAPICK_CSS);
+  next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.js/g, GRAPICK_JS);
+  next = next.replace(new RegExp(`<link rel="stylesheet" href="${GRAPICK_CSS.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" media="print" onload="this.media=&quot;all&quot;">`, 'g'), `<link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous" media="print" onload="this.media=&quot;all&quot;">`);
+  next = next.replace(new RegExp(`<noscript><link rel="stylesheet" href="${GRAPICK_CSS.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"></noscript>`, 'g'), `<noscript><link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous"></noscript>`);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/9\.5\.0\/highlight\.min\.js/g, 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js');
+  next = next.replace(/src: 'https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/11\.11\.1\/highlight\.min\.js',\s*\r?\n(?:\s*integrity: '[^']+',\s*\r?\n)?(?:\s*crossOrigin: '[^']+',\s*\r?\n)?/g, `src: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js',\n  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\n  crossOrigin: 'anonymous',\n`);
+  next = next.replace(new RegExp(`src: '${GRAPICK_JS.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',\\s*\\r?\\n(?:\\s*integrity: '[^']+',\\s*\\r?\\n)?(?:\\s*crossOrigin: '[^']+',\\s*\\r?\\n)?`, 'g'), `src: '${GRAPICK_JS}',\n  integrity: '${GRAPICK_JS_INTEGRITY}',\n  crossOrigin: 'anonymous',\n`);
+  next = next.replace(new RegExp(`(  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\\n  crossOrigin: 'anonymous',\\n)(?:  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\\n  crossOrigin: 'anonymous',\\n)+`, 'g'), '$1');
+  next = next.replace(new RegExp(`(  integrity: '${GRAPICK_JS_INTEGRITY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',\\n  crossOrigin: 'anonymous',\\n)(?:  integrity: '${GRAPICK_JS_INTEGRITY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',\\n  crossOrigin: 'anonymous',\\n)+`, 'g'), '$1');
+  next = rewriteHighlightStyleUrls(next);
 
   if (isHome) {
     next = next.replace(/<header><h1>Online Tools<\/h1><p>[\s\S]*?<\/p><\/header>/i, `<header><h1>${escapeHtml(FULL_SITE_NAME)}</h1><p>${escapeHtml(description)}</p></header>`);
@@ -395,7 +460,7 @@ for (const page of pages.filter((page) => page.slug)) {
 const sitemapUrls = pages.map((page) => `  <url><loc>${page.url}</loc><lastmod>${TODAY}</lastmod></url>`).join('\n');
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls}\n</urlset>\n`);
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${BASE_URL}/sitemap.xml\n`);
-fs.writeFileSync(path.join(ROOT, 'ads.txt'), '# Replace with your Google AdSense publisher record when available.\n');
+fs.writeFileSync(path.join(ROOT, 'ads.txt'), '# No authorized advertising sellers are configured for this site.\n');
 fs.writeFileSync(path.join(ROOT, '_redirects'), '/tools/:tool /:tool/ 301\n');
 
 const paletteCss = (css) => css
