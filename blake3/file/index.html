@@ -10,7 +10,7 @@ if (location.hostname != 'localhost') {
     var gaUrl = 'https://www.googletagmanager.com/gtag/js?id=G-K37WFCN7YL';
 
     function initGTMOnEvent(e) {
-      document.removeEventListener(event.type, initGTMOnEvent);
+      document.removeEventListener(e.type, initGTMOnEvent);
       initGTM();
     }
 
@@ -87,4 +87,4 @@ delayScripts.push({
   onload: function () {
     methodLoad();
   }
-});</script></main></div><div id="message"></div></div><script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous" defer></script><script src="js/main.js?v=42" defer></script></body></html>
+});</script></main></div><div id="message"></div></div><script src="assets/vendor/jquery/3.7.1/jquery.min.js" defer></script><script src="js/main.js?v=43" defer></script></body></html>

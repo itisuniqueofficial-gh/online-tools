@@ -9,13 +9,20 @@ const BASE_URL = 'https://ot.itisuniqueofficial.com';
 const CONTACT_URL = 'https://github.com/itisuniqueofficial-gh/online-tools/discussions';
 const GA_MEASUREMENT_ID = 'G-K37WFCN7YL';
 const GTM_CONTAINER_ID = 'GTM-KMLBM5D2';
-const JQUERY_SCRIPT = '<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous" defer></script>';
-const GRAPICK_CSS = 'https://cdn.jsdelivr.net/npm/grapick@0.1.13/dist/grapick.min.css';
-const GRAPICK_JS = 'https://cdn.jsdelivr.net/npm/grapick@0.1.13/dist/grapick.min.js';
-const GRAPICK_CSS_INTEGRITY = 'sha384-4EXeVJ0v8SVgj6nciaiDBqG7tZ6oz+cWouBaHyZLBAhd6Gaf9qSv1Tew1I41bM/T';
-const GRAPICK_JS_INTEGRITY = 'sha384-m+wpu3DWQ0UF1vZ4wMCmj3ZNqqdXnZGOiZOtjh9TVCaeMDzPycCkQxuUk1gKzoRO';
-const HIGHLIGHT_JS_INTEGRITY = 'sha384-RH2xi4eIQ/gjtbs9fUXM68sLSi99C7ZWBRX1vDrVv6GQXRibxXLbwO2NGZB74MbU';
-const HIGHLIGHT_STYLE_BASE = 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles';
+const JQUERY_SCRIPT = '<script src="assets/vendor/jquery/3.7.1/jquery.min.js" defer></script>';
+const GRAPICK_CSS = 'assets/vendor/grapick/0.1.13/grapick.min.css';
+const GRAPICK_JS = 'assets/vendor/grapick/0.1.13/grapick.min.js';
+const CRYPTO_JS = 'assets/vendor/crypto-js/4.2.0/crypto-js.js';
+const JS_SHA3 = 'assets/vendor/js-sha3/0.9.3/sha3.min.js';
+const JS_SHA1 = 'assets/vendor/js-sha1/0.7.0/sha1.min.js';
+const JS_SHA256 = 'assets/vendor/js-sha256/0.11.0/sha256.min.js';
+const JS_SHA512 = 'assets/vendor/js-sha512/0.9.0/sha512.min.js';
+const TINY_COLOR_PICKER = 'assets/vendor/tinyColorPicker/1.1.1/jqColorPicker.min.js';
+const TINY_COLOR_PICKER_COLORS = 'assets/vendor/tinyColorPicker/1.1.1/colors.min.js';
+const CRYPTO_API = 'assets/vendor/crypto-api/latest/crypto-api.min.js';
+const JSON_VIEWER = 'assets/vendor/json-viewer/iife/index.js';
+const HIGHLIGHT_JS = 'assets/vendor/highlight.js/11.11.1/highlight.min.js';
+const HIGHLIGHT_STYLE_BASE = 'assets/vendor/highlight.js/11.11.1/styles';
 const HIGHLIGHT_STYLE_RENAMES = {
   'atelier-cave-dark.min.css': 'base16/atelier-cave.min.css',
   'atelier-cave-light.min.css': 'base16/atelier-cave-light.min.css',
@@ -457,17 +464,26 @@ const rewriteHtml = (html, name, url, description, rel, linkMap, isHome = false)
   next = next.replace(/alt="Logo"/g, 'alt="Online Tools logo"');
   next = next.replace(/href="https:\/\/ot\.itisuniqueofficial\.com"/g, `href="${CONTACT_URL}"`);
   next = rewriteInternalToolLinks(next, linkMap);
+  next = next.replace(/document\.removeEventListener\(event\.type, initGTMOnEvent\);/g, 'document.removeEventListener(e.type, initGTMOnEvent);');
   next = next.replace(/<script src="https:\/\/code\.jquery\.com\/jquery-[^"]+\.min\.js"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")? defer><\/script>/g, JQUERY_SCRIPT);
-  next = next.replace(/js\/main\.js\?v=\d+/g, 'js/main.js?v=42');
+  next = next.replace(/<script src="assets\/vendor\/jquery\/3\.7\.1\/jquery\.min\.js" defer><\/script>/g, JQUERY_SCRIPT);
+  next = next.replace(/js\/main\.js\?v=\d+/g, 'js/main.js?v=43');
   next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.css/g, GRAPICK_CSS);
   next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.js/g, GRAPICK_JS);
-  next = next.replace(new RegExp(`<link rel="stylesheet" href="${escapeRegExp(GRAPICK_CSS)}" media="print" onload="this.media=&quot;all&quot;">`, 'g'), `<link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous" media="print" onload="this.media=&quot;all&quot;">`);
-  next = next.replace(new RegExp(`<noscript><link rel="stylesheet" href="${escapeRegExp(GRAPICK_CSS)}"></noscript>`, 'g'), `<noscript><link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous"></noscript>`);
-  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/9\.5\.0\/highlight\.min\.js/g, 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js');
-  next = next.replace(/src: 'https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/11\.11\.1\/highlight\.min\.js',\s*\r?\n(?:\s*integrity: '[^']+',\s*\r?\n)?(?:\s*crossOrigin: '[^']+',\s*\r?\n)?/g, `src: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js',\n  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\n  crossOrigin: 'anonymous',\n`);
-  next = next.replace(new RegExp(`src: '${escapeRegExp(GRAPICK_JS)}',\\s*\\r?\\n(?:\\s*integrity: '[^']+',\\s*\\r?\\n)?(?:\\s*crossOrigin: '[^']+',\\s*\\r?\\n)?`, 'g'), `src: '${GRAPICK_JS}',\n  integrity: '${GRAPICK_JS_INTEGRITY}',\n  crossOrigin: 'anonymous',\n`);
-  next = next.replace(new RegExp(`(  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\\n  crossOrigin: 'anonymous',\\n)(?:  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\\n  crossOrigin: 'anonymous',\\n)+`, 'g'), '$1');
-  next = next.replace(new RegExp(`(  integrity: '${escapeRegExp(GRAPICK_JS_INTEGRITY)}',\\n  crossOrigin: 'anonymous',\\n)(?:  integrity: '${escapeRegExp(GRAPICK_JS_INTEGRITY)}',\\n  crossOrigin: 'anonymous',\\n)+`, 'g'), '$1');
+  next = next.replace(/https:\/\/cdn\.jsdelivr\.net\/npm\/grapick@0\.1\.13\/dist\/grapick\.min\.(css|js)/g, (_, ext) => ext === 'css' ? GRAPICK_CSS : GRAPICK_JS);
+  next = next.replace(new RegExp(`(<link rel="stylesheet" href="${escapeRegExp(GRAPICK_CSS)}") integrity="[^"]+" crossorigin="anonymous"`, 'g'), '$1');
+  next = next.replace(new RegExp(`(<noscript><link rel="stylesheet" href="${escapeRegExp(GRAPICK_CSS)}") integrity="[^"]+" crossorigin="anonymous"`, 'g'), '$1');
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/crypto-js\/4\.2\.0\/crypto-js\.min\.js/g, CRYPTO_JS);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/js-sha3\/0\.9\.3\/sha3\.min\.js/g, JS_SHA3);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/js-sha1\/0\.7\.0\/sha1\.min\.js/g, JS_SHA1);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/js-sha256\/0\.11\.0\/sha256\.min\.js/g, JS_SHA256);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/js-sha512\/0\.9\.0\/sha512\.min\.js/g, JS_SHA512);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/tinyColorPicker\/1\.1\.1\/jqColorPicker\.min\.js/g, TINY_COLOR_PICKER);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/tinyColorPicker\/1\.1\.1\/colors\.min\.js/g, TINY_COLOR_PICKER_COLORS);
+  next = next.replace(/https:\/\/nf404\.github\.io\/crypto-api\/crypto-api\.min\.js/g, CRYPTO_API);
+  next = next.replace(/https:\/\/pfau-software\.de\/json-viewer\/dist\/iife\/index\.js/g, JSON_VIEWER);
+  next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/(?:9\.5\.0|11\.11\.1)\/highlight\.min\.js/g, HIGHLIGHT_JS);
+  next = next.replace(/src: 'assets\/vendor\/(?:crypto-js\/4\.2\.0\/crypto-js\.js|crypto-api\/latest\/crypto-api\.min\.js|json-viewer\/iife\/index\.js|js-sha3\/0\.9\.3\/sha3\.min\.js|js-sha1\/0\.7\.0\/sha1\.min\.js|js-sha256\/0\.11\.0\/sha256\.min\.js|js-sha512\/0\.9\.0\/sha512\.min\.js|tinyColorPicker\/1\.1\.1\/(?:jqColorPicker|colors)\.min\.js|highlight\.js\/11\.11\.1\/highlight\.min\.js|grapick\/0\.1\.13\/grapick\.min\.js)',\s*\r?\n(?:\s*integrity: '[^']+',\s*\r?\n)?(?:\s*crossOrigin: '[^']+',\s*\r?\n)?/g, (match) => match.replace(/\s*integrity: '[^']+',\s*\r?\n/g, '').replace(/\s*crossOrigin: '[^']+',\s*\r?\n/g, ''));
   next = rewriteHighlightStyleUrls(next);
 
   if (isHome) {
