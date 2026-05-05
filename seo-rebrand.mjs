@@ -458,6 +458,7 @@ const rewriteHtml = (html, name, url, description, rel, linkMap, isHome = false)
   next = next.replace(/href="https:\/\/ot\.itisuniqueofficial\.com"/g, `href="${CONTACT_URL}"`);
   next = rewriteInternalToolLinks(next, linkMap);
   next = next.replace(/<script src="https:\/\/code\.jquery\.com\/jquery-[^"]+\.min\.js"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")? defer><\/script>/g, JQUERY_SCRIPT);
+  next = next.replace(/js\/main\.js\?v=\d+/g, 'js/main.js?v=42');
   next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.css/g, GRAPICK_CSS);
   next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.js/g, GRAPICK_JS);
   next = next.replace(new RegExp(`<link rel="stylesheet" href="${escapeRegExp(GRAPICK_CSS)}" media="print" onload="this.media=&quot;all&quot;">`, 'g'), `<link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous" media="print" onload="this.media=&quot;all&quot;">`);
