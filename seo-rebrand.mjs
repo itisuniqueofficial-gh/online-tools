@@ -7,7 +7,9 @@ const SITE_NAME = 'Online Tools';
 const FULL_SITE_NAME = 'Online Tools — Free Web Utilities';
 const BASE_URL = 'https://ot.itisuniqueofficial.com';
 const CONTACT_URL = 'https://github.com/itisuniqueofficial-gh/online-tools/discussions';
-const JQUERY_SCRIPT = '<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0oeXUqK9PibK1Zt9lW8=" crossorigin="anonymous" defer></script>';
+const GA_MEASUREMENT_ID = 'G-K37WFCN7YL';
+const GTM_CONTAINER_ID = 'GTM-KMLBM5D2';
+const JQUERY_SCRIPT = '<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous" defer></script>';
 const GRAPICK_CSS = 'https://cdn.jsdelivr.net/npm/grapick@0.1.13/dist/grapick.min.css';
 const GRAPICK_JS = 'https://cdn.jsdelivr.net/npm/grapick@0.1.13/dist/grapick.min.js';
 const GRAPICK_CSS_INTEGRITY = 'sha384-4EXeVJ0v8SVgj6nciaiDBqG7tZ6oz+cWouBaHyZLBAhd6Gaf9qSv1Tew1I41bM/T';
@@ -70,6 +72,8 @@ const slugify = (value) => value
   .replace(/^-+|-+$/g, '');
 
 const toPosix = (file) => path.relative(ROOT, file).replace(/\\/g, '/');
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const rawTitle = (html, rel) => {
   if (rel === 'index.html') return FULL_SITE_NAME;
@@ -385,29 +389,84 @@ const headMeta = (name, url, description, keywords, isHome = false) => {
   const title = isHome ? FULL_SITE_NAME : `${name} - ${SITE_NAME}`;
   const ogTitle = isHome ? FULL_SITE_NAME : `${name} - ${SITE_NAME}`;
   const image = `${BASE_URL}/images/logo.svg`;
-  return `<title>${escapeHtml(title)}</title><base href="/"><meta name="keywords" content="${escapeHtml(keywords)}"><meta name="author" content="${escapeHtml(FULL_SITE_NAME)}"><meta name="copyright" content="${escapeHtml(FULL_SITE_NAME)}"><meta name="description" content="${escapeHtml(description)}"><link rel="canonical" href="${escapeHtml(url)}"><meta name="robots" content="index, follow"><meta property="og:title" content="${escapeHtml(ogTitle)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:url" content="${escapeHtml(url)}"><meta property="og:type" content="website"><meta property="og:site_name" content="${escapeHtml(FULL_SITE_NAME)}"><meta property="og:locale" content="en"><meta property="og:image" content="${escapeHtml(image)}"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${escapeHtml(ogTitle)}"><meta name="twitter:description" content="${escapeHtml(description)}"><meta name="twitter:image" content="${escapeHtml(image)}"><meta name="generator" content="Online Tools Rebrand">${schemaBlock(name, url, description)}`;
+  return `<title>${escapeHtml(title)}</title>${googleTagManagerHead()}<base href="/"><meta name="keywords" content="${escapeHtml(keywords)}"><meta name="author" content="${escapeHtml(FULL_SITE_NAME)}"><meta name="copyright" content="${escapeHtml(FULL_SITE_NAME)}"><meta name="description" content="${escapeHtml(description)}"><link rel="canonical" href="${escapeHtml(url)}"><meta name="robots" content="index, follow"><meta property="og:title" content="${escapeHtml(ogTitle)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:url" content="${escapeHtml(url)}"><meta property="og:type" content="website"><meta property="og:site_name" content="${escapeHtml(FULL_SITE_NAME)}"><meta property="og:locale" content="en"><meta property="og:image" content="${escapeHtml(image)}"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="${escapeHtml(ogTitle)}"><meta name="twitter:description" content="${escapeHtml(description)}"><meta name="twitter:image" content="${escapeHtml(image)}"><meta name="generator" content="Online Tools Rebrand">${schemaBlock(name, url, description)}`;
 };
 
-const rewriteHtml = (html, name, url, description, rel, isHome = false) => {
+const googleTagManagerHead = () => `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_CONTAINER_ID}');</script>`;
+
+const googleTagManagerBody = () => `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`;
+
+const rewriteAnalytics = (html) => html
+  .replace(/G-WT6N5R6W6Z/g, GA_MEASUREMENT_ID)
+  .replace(new RegExp(`<script>\\(function\\(w,d,s,l,i\\)\\{[\\s\\S]*?googletagmanager\\.com/gtm\\.js\\?id='\\+i\\+dl;f\\.parentNode\\.insertBefore\\(j,f\\);\\}\\)\\(window,document,'script','dataLayer','GTM-[A-Z0-9]+'\\);</script>`, 'g'), '')
+  .replace(/<noscript><iframe src="https:\/\/www\.googletagmanager\.com\/ns\.html\?id=GTM-[A-Z0-9]+"[\s\S]*?<\/iframe><\/noscript>/g, '')
+  .replace(/<body>/i, `<body>${googleTagManagerBody()}`);
+
+const cleanPath = (value) => value.replace(/^\/+/, '').replace(/\/+$/, '');
+
+const legacyPaths = (rel, slug) => {
+  if (!slug) return [];
+  const withoutHtml = rel.replace(/\/index\.html$/i, '').replace(/\.html$/i, '');
+  const normalized = cleanPath(withoutHtml);
+  const hyphenAlias = cleanPath(normalized.replace(/_/g, '-'));
+  const candidates = new Set([normalized, hyphenAlias]);
+  if (!normalized.includes('/')) candidates.add(slugify(normalized));
+
+  const paths = new Set();
+  for (const candidate of candidates) {
+    if (!candidate || candidate === slug) continue;
+    paths.add(`/${candidate}`);
+    paths.add(`/${candidate}/`);
+    paths.add(`/${candidate}.html`);
+    paths.add(`/${candidate}/index.html`);
+  }
+
+  if (/\.html$/i.test(rel)) paths.add(`/${rel}`);
+  if (/\/index\.html$/i.test(rel)) paths.add(`/${rel}`);
+  return [...paths].filter((legacyPath) => legacyPath !== `/${slug}/` && legacyPath !== `/${slug}/index.html`);
+};
+
+const buildLinkMap = (pages) => {
+  const map = new Map();
+  for (const page of pages.filter((page) => page.slug)) {
+    const canonical = `/${page.slug}/`;
+    for (const legacyPath of legacyPaths(page.rel, page.slug)) {
+      map.set(legacyPath, canonical);
+      map.set(legacyPath.slice(1), canonical);
+    }
+  }
+  return map;
+};
+
+const rewriteInternalToolLinks = (html, linkMap) => html.replace(/href=(['"])([^'"]+)\1/g, (match, quote, href) => {
+  if (/^(?:[a-z][a-z0-9+.-]*:|#|\?|\{)/i.test(href)) return match;
+  const [pathPart, suffix = ''] = href.split(/(?=[?#])/, 2);
+  const canonical = linkMap.get(pathPart) || linkMap.get(pathPart.replace(/^\.\//, ''));
+  return canonical ? `href=${quote}${canonical}${suffix}${quote}` : match;
+});
+
+const rewriteHtml = (html, name, url, description, rel, linkMap, isHome = false) => {
   const originalKeywords = html.match(/<meta name="keywords" content="([^"]*)">/i)?.[1] || `${name}, online tools, web utilities`;
   const keywords = keywordList(name, originalKeywords);
-  let next = html.replace(/<title>[\s\S]*?(?=<link rel="icon")/i, headMeta(name, url, description, keywords, isHome));
+  let next = rewriteAnalytics(html);
+  next = next.replace(/<title>[\s\S]*?(?=<link rel="icon")/i, headMeta(name, url, description, keywords, isHome));
   next = next.replace(/<base href="\/online-tools\/">/gi, '<base href="/">');
   next = next.replace(/\/online-tools\//g, '/');
   next = next.replace(/https:\/\/github\.com\/itisuniqueofficial-gh\/discussions/g, CONTACT_URL);
   next = next.replace(/<h2>Online Tools<\/h2>/g, '<h2>Online Tools</h2>');
   next = next.replace(/alt="Logo"/g, 'alt="Online Tools logo"');
   next = next.replace(/href="https:\/\/ot\.itisuniqueofficial\.com"/g, `href="${CONTACT_URL}"`);
+  next = rewriteInternalToolLinks(next, linkMap);
   next = next.replace(/<script src="https:\/\/code\.jquery\.com\/jquery-[^"]+\.min\.js"(?:\s+integrity="[^"]*")?(?:\s+crossorigin="[^"]*")? defer><\/script>/g, JQUERY_SCRIPT);
   next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.css/g, GRAPICK_CSS);
   next = next.replace(/https:\/\/artf\.github\.io\/grapick\/dist\/grapick\.min\.js/g, GRAPICK_JS);
-  next = next.replace(new RegExp(`<link rel="stylesheet" href="${GRAPICK_CSS.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}" media="print" onload="this.media=&quot;all&quot;">`, 'g'), `<link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous" media="print" onload="this.media=&quot;all&quot;">`);
-  next = next.replace(new RegExp(`<noscript><link rel="stylesheet" href="${GRAPICK_CSS.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"></noscript>`, 'g'), `<noscript><link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous"></noscript>`);
+  next = next.replace(new RegExp(`<link rel="stylesheet" href="${escapeRegExp(GRAPICK_CSS)}" media="print" onload="this.media=&quot;all&quot;">`, 'g'), `<link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous" media="print" onload="this.media=&quot;all&quot;">`);
+  next = next.replace(new RegExp(`<noscript><link rel="stylesheet" href="${escapeRegExp(GRAPICK_CSS)}"></noscript>`, 'g'), `<noscript><link rel="stylesheet" href="${GRAPICK_CSS}" integrity="${GRAPICK_CSS_INTEGRITY}" crossorigin="anonymous"></noscript>`);
   next = next.replace(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/9\.5\.0\/highlight\.min\.js/g, 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js');
   next = next.replace(/src: 'https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/highlight\.js\/11\.11\.1\/highlight\.min\.js',\s*\r?\n(?:\s*integrity: '[^']+',\s*\r?\n)?(?:\s*crossOrigin: '[^']+',\s*\r?\n)?/g, `src: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js',\n  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\n  crossOrigin: 'anonymous',\n`);
-  next = next.replace(new RegExp(`src: '${GRAPICK_JS.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',\\s*\\r?\\n(?:\\s*integrity: '[^']+',\\s*\\r?\\n)?(?:\\s*crossOrigin: '[^']+',\\s*\\r?\\n)?`, 'g'), `src: '${GRAPICK_JS}',\n  integrity: '${GRAPICK_JS_INTEGRITY}',\n  crossOrigin: 'anonymous',\n`);
+  next = next.replace(new RegExp(`src: '${escapeRegExp(GRAPICK_JS)}',\\s*\\r?\\n(?:\\s*integrity: '[^']+',\\s*\\r?\\n)?(?:\\s*crossOrigin: '[^']+',\\s*\\r?\\n)?`, 'g'), `src: '${GRAPICK_JS}',\n  integrity: '${GRAPICK_JS_INTEGRITY}',\n  crossOrigin: 'anonymous',\n`);
   next = next.replace(new RegExp(`(  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\\n  crossOrigin: 'anonymous',\\n)(?:  integrity: '${HIGHLIGHT_JS_INTEGRITY}',\\n  crossOrigin: 'anonymous',\\n)+`, 'g'), '$1');
-  next = next.replace(new RegExp(`(  integrity: '${GRAPICK_JS_INTEGRITY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',\\n  crossOrigin: 'anonymous',\\n)(?:  integrity: '${GRAPICK_JS_INTEGRITY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}',\\n  crossOrigin: 'anonymous',\\n)+`, 'g'), '$1');
+  next = next.replace(new RegExp(`(  integrity: '${escapeRegExp(GRAPICK_JS_INTEGRITY)}',\\n  crossOrigin: 'anonymous',\\n)(?:  integrity: '${escapeRegExp(GRAPICK_JS_INTEGRITY)}',\\n  crossOrigin: 'anonymous',\\n)+`, 'g'), '$1');
   next = rewriteHighlightStyleUrls(next);
 
   if (isHome) {
@@ -424,31 +483,55 @@ const htmlFiles = execSync('git ls-files "*.html"', { cwd: ROOT, encoding: 'utf8
   .filter((file) => !/^[^/]+-online\/index\.html$/i.test(file))
   .map((file) => path.join(ROOT, file));
 
-const pages = [];
+const sourcePages = htmlFiles
+  .map((file) => {
+    const rel = toPosix(file);
+    const html = fs.readFileSync(file, 'utf8');
+    if (rel === '404.html' || !/<header><h1>/i.test(html)) return null;
+    const isHome = rel === 'index.html';
+    const raw = rawTitle(html, rel);
+    const name = isHome ? FULL_SITE_NAME : seoName(raw, rel);
+    const slug = isHome ? '' : slugify(name);
+    const url = isHome ? `${BASE_URL}/` : `${BASE_URL}/${slug}/`;
+    const description = isHome
+      ? 'Free online web utilities for hashing, encoding, decoding, encryption, JSON, XML, QR codes, text tools, and developer workflows.'
+      : shortDescription(name);
+    return { rel, html, name, slug, url, description, file, isHome };
+  })
+  .filter(Boolean);
+
+const linkMap = buildLinkMap(sourcePages);
+const canonicalPages = new Map();
+const pageRank = (page) => {
+  if (page.isHome) return 0;
+  if (!page.rel.includes('/') && page.rel.endsWith('.html')) return 1;
+  if (page.rel === `${page.slug}/index.html`) return 2;
+  return 3;
+};
+
+for (const page of sourcePages) {
+  const key = page.slug || '__home__';
+  const existing = canonicalPages.get(key);
+  if (!existing || pageRank(page) < pageRank(existing)) canonicalPages.set(key, page);
+}
+
+const pages = [...canonicalPages.values()].sort((a, b) => a.url.localeCompare(b.url));
 
 for (const file of htmlFiles) {
   const rel = toPosix(file);
-  const html = fs.readFileSync(file, 'utf8');
+  const sourcePage = sourcePages.find((page) => page.rel === rel);
+  const html = sourcePage?.html || fs.readFileSync(file, 'utf8');
   if (rel === '404.html') {
     const description = 'The page was not found. Use Online Tools to access free hashing, encoding, decoding, encryption, JSON, XML, QR code, and developer utilities.';
-    fs.writeFileSync(file, rewriteHtml(html, 'Page Not Found', `${BASE_URL}/404.html`, description, rel).replace(/<meta name="robots" content="index, follow">/i, '<meta name="robots" content="noindex, follow">'));
+    fs.writeFileSync(file, rewriteHtml(html, 'Page Not Found', `${BASE_URL}/404.html`, description, rel, linkMap).replace(/<meta name="robots" content="index, follow">/i, '<meta name="robots" content="noindex, follow">'));
     continue;
   }
   if (!/<header><h1>/i.test(html)) {
     fs.writeFileSync(file, html.replace(/\/online-tools\//g, '/'));
     continue;
   }
-  const isHome = rel === 'index.html';
-  const raw = rawTitle(html, rel);
-  const name = isHome ? FULL_SITE_NAME : seoName(raw, rel);
-  const slug = isHome ? '' : slugify(name);
-  const url = isHome ? `${BASE_URL}/` : `${BASE_URL}/${slug}/`;
-  const description = isHome
-    ? 'Free online web utilities for hashing, encoding, decoding, encryption, JSON, XML, QR codes, text tools, and developer workflows.'
-    : shortDescription(name);
-  const updated = rewriteHtml(html, name, url, description, rel, isHome);
+  const updated = rewriteHtml(html, sourcePage.name, sourcePage.url, sourcePage.description, rel, linkMap, sourcePage.isHome);
   fs.writeFileSync(file, updated);
-  pages.push({ rel, name, slug, url, file });
 }
 
 for (const page of pages.filter((page) => page.slug)) {
@@ -461,7 +544,12 @@ const sitemapUrls = pages.map((page) => `  <url><loc>${page.url}</loc><lastmod>$
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls}\n</urlset>\n`);
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${BASE_URL}/sitemap.xml\n`);
 fs.writeFileSync(path.join(ROOT, 'ads.txt'), '# No authorized advertising sellers are configured for this site.\n');
-fs.writeFileSync(path.join(ROOT, '_redirects'), '/tools/:tool /:tool/ 301\n');
+const redirectLines = [...linkMap]
+  .filter(([from]) => from.startsWith('/'))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([from, to]) => `${from} ${to} 301`);
+redirectLines.push('/:slug/index.html /:slug/ 301', '/tools/:tool /:tool/ 301');
+fs.writeFileSync(path.join(ROOT, '_redirects'), `${redirectLines.join('\n')}\n`);
 
 const paletteCss = (css) => css
   .replace(/box-shadow:[^;}]+/g, 'box-shadow:none')
