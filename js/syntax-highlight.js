@@ -1,1 +1,211 @@
-!function(e){function a(e){o.code.text(e),o.code.attr("class",o.language.val()),hljs.highlightElement?hljs.highlightElement(o.code[0]):hljs.highlightBlock(o.code[0])}function r(){var e="";s.forEach(function(a){e+='<option value="'+a+'">'+t[a]+"</option>"}),o.groupRecent.html(e)}var t={"1c":"1C",accesslog:"Access log",actionscript:"ActionScript",ada:"Ada",apache:"Apache",applescript:"AppleScript",arduino:"Arduino",armasm:"ARM Assembly",asciidoc:"AsciiDoc",aspectj:"AspectJ",autohotkey:"AutoHotkey",autoit:"AutoIt",avrasm:"AVR Assembler",axapta:"Axapta",bash:"Bash",basic:"Basic",bnf:"Backus–Naur Form",brainfuck:"Brainfuck",cal:"C/AL",capnproto:"Cap’n Proto",ceylon:"Ceylon","clojure-repl":"Clojure REPL",clojure:"Clojure",cmake:"CMake",coffeescript:"CoffeeScript",coq:"Coq",cos:"Caché Object Script",cpp:"C++",crmsh:"crmsh",crystal:"Crystal",cs:"C#",csp:"CSP",css:"CSS",d:"D",dart:"Dart",delphi:"Delphi",diff:"Diff",django:"Django",dns:"DNS Zone file",dockerfile:"Dockerfile",dos:"DOS .bat",dsconfig:"dsconfig",dts:"Device Tree",dust:"Dust",elixir:"Elixir",elm:"Elm",erb:"ERB (Embedded Ruby)","erlang-repl":"Erlang REPL",erlang:"Erlang",excel:"Excel",fix:"FIX",fortran:"Fortran",fsharp:"F#",gams:"GAMS",gauss:"GAUSS",gcode:"G-code (ISO 6983)",gherkin:"Gherkin",glsl:"GLSL",go:"Go",golo:"Golo",gradle:"Gradle",groovy:"Groovy",haml:"Haml",handlebars:"Handlebars",haskell:"Haskell",haxe:"Haxe",hsp:"HSP",html:"HTML",htmlbars:"HTMLBars",http:"HTTP",inform7:"Inform 7",ini:"Ini",irpf90:"IRPF90",java:"Java",javascript:"JavaScript",json:"JSON",julia:"Julia",kotlin:"Kotlin",lasso:"Lasso",ldif:"LDIF",less:"Less",lisp:"Lisp",livecodeserver:"LiveCode",livescript:"LiveScript",lsl:"Linden Scripting Language",lua:"Lua",makefile:"Makefile",markdown:"Markdown",mathematica:"Mathematica",matlab:"Matlab",maxima:"Maxima",mel:"MEL",mercury:"Mercury",mipsasm:"MIPS Assembly",mizar:"Mizar",mojolicious:"Mojolicious",monkey:"Monkey",moonscript:"MoonScript",nginx:"Nginx",nimrod:"Nimrod",nix:"Nix",nsis:"NSIS",objectivec:"Objective-C",ocaml:"OCaml",openscad:"OpenSCAD",oxygene:"Oxygene",parser3:"Parser3",perl:"Perl",pf:"pf",php:"PHP",pony:"Pony",powershell:"PowerShell",processing:"Processing",profile:"Python profile",prolog:"Prolog",protobuf:"Protocol Buffers",puppet:"Puppet",purebasic:"PureBASIC",python:"Python",q:"Q",qml:"QML",r:"R",rib:"RenderMan RIB",roboconf:"Roboconf",rsl:"RenderMan RSL",ruby:"Ruby",ruleslanguage:"Oracle Rules Language",rust:"Rust",scala:"Scala",scheme:"Scheme",scilab:"Scilab",scss:"SCSS",smali:"Smali",smalltalk:"Smalltalk",sml:"SML",sqf:"SQF",sql:"SQL",stan:"Stan",stata:"Stata",step21:"STEP Part 21",stylus:"Stylus",swift:"Swift",taggerscript:"Tagger Script",tap:"Test Anything Protocol",tcl:"Tcl",tex:"TeX",thrift:"Thrift",tp:"TP",twig:"Twig",typescript:"TypeScript",vala:"Vala",vbnet:"VB.NET","vbscript-html":"VBScript in HTML",vbscript:"VBScript",verilog:"Verilog",vhdl:"VHDL",vim:"Vim Script",x86asm:"Intel x86 Assembly",xl:"XL",xml:"XML",xquery:"XQuery",yaml:"YAML",zephir:"Zephir"},i=["Default","Agate","Androidstudio","Arduino Light","Arta","Ascetic","Atelier Cave Dark","Atelier Cave Light","Atelier Dune Dark","Atelier Dune Light","Atelier Estuary Dark","Atelier Estuary Light","Atelier Forest Dark","Atelier Forest Light","Atelier Heath Dark","Atelier Heath Light","Atelier Lakeside Dark","Atelier Lakeside Light","Atelier Plateau Dark","Atelier Plateau Light","Atelier Savanna Dark","Atelier Savanna Light","Atelier Seaside Dark","Atelier Seaside Light","Atelier Sulphurpool Dark","Atelier Sulphurpool Light","Brown Paper","Codepen Embed","Color Brewer","Dark","Darkula","Docco","Dracula","Far","Foundation","Github Gist","Github","Googlecode","Grayscale","Gruvbox Dark","Gruvbox Light","Hopscotch","Hybrid","Idea","Ir Black","Kimbie Dark","Kimbie Light","Magula","Mono Blue","Monokai Sublime","Monokai","Obsidian","Ocean","Paraiso Dark","Paraiso Light","Pojoaque","Purebasic","Qtcreator Dark","Qtcreator Light","Railscasts","Rainbow","School Book","Solarized Dark","Solarized Light","Sunburst","Tomorrow Night Blue","Tomorrow Night Bright","Tomorrow Night Eighties","Tomorrow Night","Tomorrow","Vs","Xcode","Xt 256","Zenburn"],l=window.localStorage,o={},s=[],n="Default";if(l)try{n=l.lastStyle||"Default";var c=JSON.parse(l.recentLanguages);e.isArray(c)&&(s=c)}catch(e){}window.highlight=a,e(document).ready(function(){o.code=e(".html"),o.language=e("#language"),o.groupRecent=o.language.find('[label="Recent"]'),o.groupAll=o.language.find('[label="All"]'),o.language.change(function(){s.unshift(o.language.val());var a=[];s.forEach(function(r){-1==e.inArray(r,a)&&a.push(r)}),s=a.slice(0,10),l&&(l.recentLanguages=JSON.stringify(s)),"All"==o.language.find(":selected").parent().attr("label")&&r()});var a="";for(var c in t)a+='<option value="'+c+'">'+t[c]+"</option>";o.groupAll.html(a),r(),s.length&&o.language.val(s[0]),o.style=e("#style"),o.style.change(function(){var a=o.style.val();e("link[title]").attr("disabled","disabled"),e('link[title="'+a+'"]').removeAttr("disabled"),l&&(l.lastStyle=a)}),a="",i.forEach(function(e){a+='<option value="'+e+'">'+e+"</option>"}),o.style.html(a).val(n).change()})}(jQuery);
+!function ($) {
+  var storage = window.localStorage;
+  var recentLanguages = [];
+  var lastStyle = "Default";
+  var els = {};
+  var loadedHighlightLanguages = false;
+
+  var languageNames = {
+    html: "HTML",
+    xml: "XML",
+    css: "CSS",
+    javascript: "JavaScript",
+    json: "JSON",
+    bash: "Bash",
+    python: "Python",
+    typescript: "TypeScript",
+    java: "Java",
+    cpp: "C++",
+    csharp: "C#",
+    php: "PHP",
+    ruby: "Ruby",
+    go: "Go",
+    rust: "Rust",
+    sql: "SQL",
+    yaml: "YAML",
+    markdown: "Markdown",
+    powershell: "PowerShell",
+    dockerfile: "Dockerfile",
+    plaintext: "Plain text"
+  };
+
+  var preferredLanguages = [
+    "html", "css", "javascript", "json", "xml", "bash", "python", "typescript",
+    "java", "cpp", "csharp", "php", "ruby", "go", "rust", "sql", "yaml",
+    "markdown", "powershell", "dockerfile", "plaintext"
+  ];
+
+  if (storage) {
+    try {
+      lastStyle = storage.lastStyle || lastStyle;
+      var saved = JSON.parse(storage.recentLanguages || "[]");
+      if ($.isArray(saved)) recentLanguages = saved;
+    } catch (ignore) {}
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, function (char) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char];
+    });
+  }
+
+  function displayName(language) {
+    return languageNames[language] || language.replace(/-/g, " ").replace(/\b\w/g, function (char) {
+      return char.toUpperCase();
+    });
+  }
+
+  function allLanguages() {
+    var seen = {};
+    var languages = [];
+
+    function add(language) {
+      if (!language || seen[language]) return;
+      seen[language] = true;
+      languages.push(language);
+    }
+
+    preferredLanguages.forEach(add);
+    if (window.hljs && hljs.listLanguages) {
+      hljs.listLanguages().sort().forEach(add);
+    }
+
+    return languages;
+  }
+
+  function optionHtml(language) {
+    return '<option value="' + language + '">' + displayName(language) + "</option>";
+  }
+
+  function renderRecentLanguages() {
+    var html = "";
+    recentLanguages.forEach(function (language) {
+      html += optionHtml(language);
+    });
+    els.groupRecent.html(html);
+  }
+
+  function rememberLanguage(language) {
+    if (!language) return;
+
+    recentLanguages.unshift(language);
+    var unique = [];
+    recentLanguages.forEach(function (item) {
+      if ($.inArray(item, unique) === -1) unique.push(item);
+    });
+
+    recentLanguages = unique.slice(0, 10);
+    if (storage) storage.recentLanguages = JSON.stringify(recentLanguages);
+    renderRecentLanguages();
+    els.language.val(language);
+  }
+
+  function highlightCode(input) {
+    var code = els.code[0];
+    var language = els.language.val() || "plaintext";
+    var result;
+
+    if (!code) return "";
+
+    if (window.hljs && hljs.listLanguages && !loadedHighlightLanguages) {
+      loadedHighlightLanguages = true;
+      populateLanguages();
+      els.language.val(language);
+    }
+
+    code.removeAttribute("data-highlighted");
+    code.className = "hljs language-" + language;
+
+    try {
+      if (window.hljs && language !== "plaintext" && hljs.getLanguage(language)) {
+        result = hljs.highlight(String(input), {
+          language: language,
+          ignoreIllegals: true
+        }).value;
+      } else if (window.hljs && language !== "plaintext" && hljs.highlightAuto) {
+        result = hljs.highlightAuto(String(input)).value;
+      } else {
+        result = escapeHtml(input);
+      }
+    } catch (ignore) {
+      result = escapeHtml(input);
+    }
+
+    code.innerHTML = result;
+    rememberLanguage(language);
+    return input;
+  }
+
+  function populateLanguages() {
+    var selected = els.language.val() || recentLanguages[0] || "html";
+    var html = "";
+    allLanguages().forEach(function (language) {
+      html += optionHtml(language);
+    });
+    els.groupAll.html(html);
+    renderRecentLanguages();
+    els.language.val(selected);
+    if (!els.language.val()) els.language.val("html");
+  }
+
+  function populateStyles() {
+    var options = "";
+    $('link[title]').each(function () {
+      options += '<option value="' + this.title + '">' + this.title + "</option>";
+    });
+    els.style.html(options).val(lastStyle);
+    if (!els.style.val()) els.style.val("Default");
+    applyStyle();
+  }
+
+  function applyStyle() {
+    var style = els.style.val();
+    $('link[title]').prop("disabled", true);
+    $('link[title]').filter(function () {
+      return this.title === style;
+    }).prop("disabled", false);
+    if (storage) storage.lastStyle = style;
+  }
+
+  function refreshHighlightLanguages() {
+    if (!window.hljs || !hljs.listLanguages || loadedHighlightLanguages) return false;
+    loadedHighlightLanguages = true;
+    populateLanguages();
+    return true;
+  }
+
+  window.highlight = highlightCode;
+
+  $(document).ready(function () {
+    els.code = $("pre.syntax-highlight code");
+    els.language = $("#language");
+    els.groupRecent = els.language.find('[label="Recent"]');
+    els.groupAll = els.language.find('[label="All"]');
+    els.style = $("#style");
+
+    els.language.on("change", function () {
+      rememberLanguage(els.language.val());
+      if (window.ot && ot.autoUpdate) ot.autoUpdate();
+    });
+
+    els.style.on("change", applyStyle);
+
+    populateLanguages();
+    populateStyles();
+
+    if (!refreshHighlightLanguages()) {
+      var languageTimer = setInterval(function () {
+        if (refreshHighlightLanguages()) clearInterval(languageTimer);
+      }, 50);
+      setTimeout(function () {
+        clearInterval(languageTimer);
+      }, 5000);
+    }
+  });
+}(jQuery);
